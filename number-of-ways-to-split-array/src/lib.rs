@@ -1,31 +1,16 @@
 fn ways_to_split_array(nums: Vec<i32>) -> i32 {
     let mut split_count = 0;
-    for i in 0..nums.len() - 1 {
-        if is_valid_split(&nums, i) {
-            split_count += 1
+    let mut pre_split = nums[0];
+    let mut post_split = nums[1..].iter().sum();
+    for i in 1..nums.len() {
+        // a "split" at index `i` is valid if sum(nums[:i+1]) >= sum(nums[i+1:]) and 0 <= i < n - 1
+        if pre_split >= post_split {
+            split_count += 1;
         }
+        pre_split += nums[i];
+        post_split -= nums[i];
     }
     return split_count;
-}
-
-fn is_valid_split(nums: &Vec<i32>, i: usize) -> bool {
-    // a "split" at index `i` is valid if sum(nums[:i+1]) >= sum(nums[i+1:]) and 0 <= i < n - 1
-
-    let mut j = 0usize;
-    let mut pre_split = 0;
-    let mut post_split = 0;
-
-    while j <= i {
-        pre_split += nums[j];
-        j += 1
-    }
-
-    while j < nums.len() {
-        post_split += nums[j];
-        j += 1
-    }
-
-    return pre_split >= post_split;
 }
 
 #[cfg(test)]

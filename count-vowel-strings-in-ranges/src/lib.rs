@@ -1,29 +1,23 @@
-use std::collections::HashSet;
-
 fn vowel_strings(words: Vec<String>, queries: Vec<Vec<i32>>) -> Vec<i32> {
-    let mut cache: HashSet<i32> = HashSet::new();
+    const VOWELS: &[char] = &['a', 'e', 'i', 'o', 'u'];
+    let mut cumulative: Vec<i32> = Vec::with_capacity(words.len());
+    let mut total = 0;
+    for word in words {
+        if word.starts_with(VOWELS) && word.ends_with(VOWELS) {
+            total += 1;
+        }
+        cumulative.push(total);
+    }
+
     return queries
         .iter()
         .map(|query| {
-            let mut count = 0;
-            for i in query[0]..=query[1] {
-                if cache.contains(&i) {
-                    count += 1;
-                    continue;
-                }
-                if is_vowel_wrapped(words[i as usize].clone()) {
-                    count += 1;
-                    cache.insert(i);
-                }
+            if query[0] == 0 {
+                return cumulative[query[1] as usize]
             }
-            return count;
+            return cumulative[query[1] as usize] - cumulative[(query[0] - 1) as usize]
         })
         .collect()
-}
-
-fn is_vowel_wrapped(word: String) -> bool {
-    const VOWELS: &[char] = &['a', 'e', 'i', 'o', 'u'];
-    return word.starts_with(VOWELS) && word.ends_with(VOWELS)
 }
 
 #[cfg(test)]
